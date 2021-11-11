@@ -1,4 +1,4 @@
-import { ObjectId, ReturnDocument } from "mongodb";
+import { ObjectId } from "mongodb";
 import { err, ok } from "neverthrow";
 import { Quizzes } from "../../db";
 import { Quiz } from "../../model/quiz.model";

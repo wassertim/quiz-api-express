@@ -1,4 +1,3 @@
-import { ObjectId } from "bson";
 import { Question } from "./question.model";
 
 export interface Quiz {
