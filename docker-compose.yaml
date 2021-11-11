@@ -1,0 +1,7 @@
+version: "3.1"
+services:
+  mongo:
+    image: mongo:5.0.3
+    container_name: "quiz-mongo"
+    ports:
+      - '27017:27017'

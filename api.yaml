@@ -1,0 +1,310 @@
+openapi: '3.0.1'
+info:
+  title: Quiz
+  version: '1.0'
+  description: Small Quiz Api
+servers:
+  - url: http://localhost:5050
+    description: local
+paths:    
+  /users/register:
+    post:
+      summary: "Register a user"
+      tags:
+        - Registration and Authentication
+      operationId: createAccount
+      description: Create an account
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/User"
+      responses:
+        400:
+          description: User validation failed
+          content:
+            text/plain:
+              schema:
+                type: string
+        201:
+          description: User created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/User"
+  /users/login: #migh not be needed
+    post:
+      tags:
+        - Registration and Authentication
+      operationId: login
+      description: User login
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/User"
+      responses:
+        200:
+          description: User logged in sucessfully
+          content:
+            text/plain:
+              schema:
+                $ref: "#/components/schemas/Token"
+  /quiz-statistics/{quizId}:
+    get:
+      parameters:
+        - in: path
+          name: quizId
+          required: true
+          schema:
+            $ref: "#/components/schemas/ObjectIdRequired"
+      tags:
+        - Quiz Statistics
+      operationId: getQuizSubmissionResults
+      description: Get all quiz attempts
+      responses:
+        200:
+          description: "All quiz attempts"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/QuizStatistics"
+  /quiz-submissions:
+    post:
+      tags:
+        - Quiz Submissions
+      operationId: submitQuiz
+      description: Submit a completed quiz
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/QuizSubmission"
+      responses:
+        201:
+          description: Quiz submitted
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/QuizSubmissionResult"
+  /profiles/{login}/quizzes/{quizId}:
+    put:
+      tags:
+        - Quiz Templates
+      operationId: editQuiz
+      description: Edit a quiz
+      parameters:
+        - in: path
+          name: quizId
+          required: true
+          schema:
+            $ref: "#/components/schemas/ObjectId"
+        - in: path
+          name: login
+          required: true
+          schema:
+            type: string
+      security:
+        - basicAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Quiz"
+      responses:
+        401:
+          $ref: "#/components/responses/UnauthorizedError"
+        200:
+          description: Quiz updated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Quiz"  
+  /profiles/{login}/quizzes:
+    post:
+      tags:
+        - Quiz Templates
+      operationId: createQuiz
+      description: Create a quiz
+      parameters:
+        - in: path
+          name: login
+          required: true
+          schema:
+            type: string
+      security:
+        - basicAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Quiz"
+      responses:
+        400:
+          description: Quiz does not have all the required properties
+          content:
+            text/plain:
+              schema:
+                type: string
+        401:
+          $ref: "#/components/responses/UnauthorizedError"
+        201:
+          description: Quiz created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Quiz"  
+components:
+  responses:
+    UnauthorizedError:
+      description: Authentication information is missing or invalid
+      headers:
+        WWW_Authenticate:
+          schema:
+            type: string
+  securitySchemes:
+    basicAuth:
+      type: http
+      scheme: basic
+  schemas:
+    QuizStatistics:
+      type: object
+      properties:
+        quizId:
+          $ref: "#/components/schemas/ObjectId"
+        totalSubmissions:
+          type: integer
+        submissionsStat:
+          type: array
+          items:
+            $ref: "#/components/schemas/QuizSubmissionResult"
+    QuestionAndAnswers:
+      type: object
+      properties:
+        questionIndex:
+          type: integer
+        answerIndicies:
+          type: array
+          items:
+            type: integer
+    QuizSubmission:
+      type: object
+      properties:
+        quizId:
+          $ref: "#/components/schemas/ObjectIdRequired"
+        questionsAndAnswers:
+          type: array
+          items:
+            $ref: "#/components/schemas/QuestionAndAnswers"
+    QuestionResult:
+      type: object
+      properties:
+        questionIndex:
+          type: integer
+          example: 0
+        score:
+          nullable: false
+          type: integer
+          example: 5
+        isCorrect:
+          type: boolean
+          example: true
+        questionText:
+          type: string
+          example: some question
+        completed:
+          type: boolean
+          example: true
+    QuizSubmissionResult:
+      type: object
+      properties:
+        id:
+          $ref: "#/components/schemas/ObjectId"
+        totalQuestionsInQuiz:
+          type: integer
+          example: 2
+        totalCompletedQuestions:
+          type: integer
+          example: 1
+        scoreTotal:
+          type: integer  
+        completion:
+          type: string   
+        correctAnswersCount:
+          type: integer
+        questionsAndAnswers:
+          type: array
+          items:
+            $ref: "#/components/schemas/QuestionResult"
+    ObjectId:
+      type: string
+      example: 507f1f77bcf86cd799439011
+      readOnly: true
+    ObjectIdRequired:
+      type: string
+      example: 507f1f77bcf86cd799439011      
+    Answer:
+      type: object
+      properties:
+        text:
+          nullable: false
+          type: string
+          example: "42"
+          minLength: 1
+        isCorrect:
+          nullable: false
+          type: boolean
+          example: true
+    Question:
+      type: object
+      properties:
+        questionText:
+          nullable: false
+          type: string
+          minLength: 1
+          example: what is the answer to life the universe and everything
+        questionScore:
+          nullable: false
+          type: integer
+          example: 5
+        answers:
+          nullable: false
+          type: array
+          minItems: 2
+          items:
+            $ref: "#/components/schemas/Answer"
+    Quiz:
+      type: object
+      properties:
+        _id:
+          $ref: "#/components/schemas/ObjectId"        
+        createdBy:
+          type: string
+          example: laura
+          readOnly: true
+        questions:
+          nullable: false
+          type: array
+          minItems: 1
+          items:
+            $ref: "#/components/schemas/Question"
+    Token:
+      type: string
+      example: Basic ZGVtbzpwQDU1dzByZA==
+    User:
+      type: object
+      properties:
+        login:
+          type: string
+          nullable: false
+          example: laura
+        password:
+          type: string
+          nullable: false
+          example: mypassword
+
