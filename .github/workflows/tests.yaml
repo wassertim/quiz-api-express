@@ -19,3 +19,4 @@ jobs:
         run: npm test
         env:
           MONGO_HOST: mongo
+          MONGO_PRISMA: mongodb://mongo:27017/quiz?retryWrites=true
