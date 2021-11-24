@@ -1,28 +1,29 @@
 import { createUser } from "../../../api/user/user.service";
-import { Users } from "../../../db";
 import { err, ok } from "neverthrow";
-import { getMockedCollection } from "../../../test/mongo.mock";
 import { ApiError, ServiceError } from "../../../errors/errors";
+import { User } from "@prisma/client";
+import { prisma } from "../../db";
+import { mocked } from "ts-jest/utils";
 
 jest.mock("bcrypt");
-jest.mock("../../../db");
 
 describe("User Service Create User", () => {
+    const mockedPrisma = mocked(prisma);
+    const mockedUser = mocked(mockedPrisma.user);
     test("Should return ok when normal flow", async () => {
-        const user = { login: "laura", password: "mypassword" };
-        const mockUserCollection = getMockedCollection(Users);
-        mockUserCollection.findOne = jest.fn().mockImplementation(() => undefined);
-        mockUserCollection.insertOne = jest.fn().mockImplementation(() => user);
+        const user = { login: "laura", password: "mypassword" } as User;        
+        
+        mockedUser.findFirst = jest.fn().mockImplementation(() => undefined);
+        mockedUser.create = jest.fn().mockImplementation(() => user);
 
         const result = await createUser(user);
 
-        expect(mockUserCollection.findOne).toBeCalledWith({ login: user.login });
+        expect(mockedUser.findFirst).toBeCalledWith({ where: { login: user.login }});
         expect(result).toStrictEqual(ok(user));
     });
     test("Should return err when user found", async () => {
-        const user = { login: "laura", password: "mypassword" };
-        const mockUserCollection = getMockedCollection(Users);
-        mockUserCollection.findOne = jest.fn().mockImplementation(() => ({}));
+        const user = { login: "laura", password: "mypassword" } as User;        
+        mockedUser.findFirst = jest.fn().mockImplementation(() => ({}));
         const errObj = {
             code: ApiError.ENTITY_EXISTS,
             message: "User with login laura already exists",
@@ -30,7 +31,7 @@ describe("User Service Create User", () => {
 
         const result = await createUser(user);
 
-        expect(mockUserCollection.findOne).toBeCalledWith({ login: user.login });
+        expect(mockedUser.findFirst).toBeCalledWith({ where: { login: user.login }});
         expect(result).toStrictEqual(err(errObj));
     });
 });

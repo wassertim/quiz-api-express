@@ -27,3 +27,15 @@ export function initDatabase() {
         }
     });
 }
+
+export function cleanUpDatabase() {    
+    beforeEach(async () => {
+        const { _db, client } = await mongoConnect();            
+        await deleteCollections(_db);
+        try {
+            await client.close();
+        } catch (e) {
+            console.log(e);
+        }
+    });
+}

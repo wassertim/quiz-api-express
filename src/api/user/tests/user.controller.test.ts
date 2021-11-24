@@ -2,11 +2,11 @@ import { login, register } from "../user.controller";
 import { createUser, validateUser } from "../user.service";
 import { Request, Response } from "express";
 import { err, ok } from "neverthrow";
-import { User } from "../../../model/user.model";
 import { mockResponse } from "../../../test/express.mock";
 import { constants } from "http2";
 import { mocked } from "ts-jest/utils";
 import { ApiError } from "../../../errors/errors";
+import { User } from "@prisma/client";
 
 jest.mock("../../../api/user/user.service");
 

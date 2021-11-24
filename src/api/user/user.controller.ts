@@ -1,8 +1,8 @@
 import { Request, Response } from "express";
 import { createUser, validateUser } from "./user.service";
 import { constants } from "http2";
-import { User } from "../../model/user.model";
 import { mapToStatusCode } from "../../errors/error.mapper";
+import { User } from "@prisma/client";
 
 export async function register(req: Request<unknown, unknown, User>, res: Response<User | string>) {
     return (await createUser(req.body))

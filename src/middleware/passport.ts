@@ -1,9 +1,10 @@
 import { BasicVerifyFunction } from "passport-http";
 import { validateUser } from "../api/user/user.service";
 import passport from "passport";
+import { User } from ".prisma/client";
 
 export const verify: BasicVerifyFunction = async (login, password, done) => {
-    const user = { login, password };
+    const user = { login, password } as User;
 
     return (await validateUser(user))
         .map(() => done(null, user))
