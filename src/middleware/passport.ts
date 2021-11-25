@@ -7,7 +7,7 @@ export const verify: BasicVerifyFunction = async (login, password, done) => {
     const user = { login, password } as User;
 
     return (await validateUser(user))
-        .map(() => done(null, user))
+        .map((user) => done(null, user))
         .mapErr(() => done(null, false))
         .unwrapOr(() => done(null, false));
 };

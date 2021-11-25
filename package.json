@@ -9,8 +9,7 @@
     "prisma:generate": "prisma generate"
   },
   "pre-commit": [
-    "lint",
-    "test"
+    "lint"
   ],
   "dependencies": {
     "@prisma/client": "^3.5.0",

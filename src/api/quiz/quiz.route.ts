@@ -8,5 +8,5 @@ import { quizSchema } from "./quiz.schema";
 const withValidation = getValidator(quizSchema);
 
 export const quizRouter = Router()
-    .post("/", withValidation, withAuthentication, withAuthorization, postQuiz)
+    .post("/", withAuthentication, withAuthorization, postQuiz)
     .put("/:quizId/", withValidation, withAuthentication, withAuthorization, putQuiz);

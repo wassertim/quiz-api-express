@@ -12,4 +12,29 @@ model User {
     id       String @id @default(dbgenerated()) @map("_id") @db.ObjectId
     login    String @unique
     password String
+    quizzes  Quiz[]
+}
+
+model Answer {
+    id         String   @id @default(dbgenerated()) @map("_id") @db.ObjectId
+    text       String
+    isCorrect  Boolean
+    question   Question @relation(fields: [questionId], references: [id])
+    questionId String   @db.ObjectId
+}
+
+model Question {
+    id            String   @id @default(dbgenerated()) @map("_id") @db.ObjectId
+    questionText  String
+    questionScore Int
+    answers       Answer[]
+    quiz          Quiz[]
+}
+
+model Quiz {
+    id          String     @id @default(dbgenerated()) @map("_id") @db.ObjectId
+    createdBy   User       @relation(fields: [userId], references: [id])
+    userId      String     @db.ObjectId
+    questions   Question[] @relation(fields: [questionIds], references: [id])
+    questionIds String[]   @db.ObjectId
 }

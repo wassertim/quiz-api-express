@@ -8,7 +8,7 @@ export async function registerUser(user: User) {
 }
 
 export async function login(user: User) {
-    return (await request(app).post("/users/login").send(user)).text;
+    return (await request(app).post("/users/login").send(user)).body;
 }
 
 export async function createQuiz(login: string, token: string, quiz: Quiz) {
