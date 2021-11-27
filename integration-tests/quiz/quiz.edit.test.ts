@@ -5,6 +5,7 @@ import request from "supertest";
 import { app } from "../../src/app";
 import { openapi } from "../util/openapi";
 import { constants } from "http2";
+import { Quiz } from "@prisma/client";
 
 describe("Edit Quiz API", () => {
     initDatabase();
@@ -15,102 +16,40 @@ describe("Edit Quiz API", () => {
         await registerUser(anotherUser);
     });
     test("Should update a quiz", async () => {
-        const [method, path] = ["put" as Operation, "/profiles/{login}/quizzes/{quizId}"];
-        const token = await login(user);
+        const { basicAuth } = await login(user);
         const originalQuiz = {
-            questions: [
-                {
-                    questionText: "what is the answer to life the universe and everything",
-                    questionScore: 5,
-                    answers: [
-                        {
-                            text: "2",
-                            isCorrect: true,
-                        },
-                        {
-                            text: "15",
-                            isCorrect: false,
-                        },
-                    ],
-                },
-            ],
-        };
-        const { id } = await createQuiz(user.login, token, originalQuiz);
+            questionIds: ["619e9fa874959e2e053aec4e", "619e9fa874959e2e053aec4e"],
+        } as Quiz;
+        const { id } = await createQuiz(user.login, basicAuth, originalQuiz);
         const updatedQuiz = {
-            questions: [
-                {
-                    questionText: "what is the answer to life the universe and everything",
-                    questionScore: 5,
-                    answers: [
-                        {
-                            text: "42",
-                            isCorrect: true,
-                        },
-                        {
-                            text: "41",
-                            isCorrect: false,
-                        },
-                    ],
-                },
-            ],
-        };
+            questionIds: ["619e9fa874959e2e053aec4e"],
+        } as Quiz;
 
-        const response = await request(app)[method](path.replace("{login}", user.login).replace("{quizId}", id!))
-            .set({ Authorization: token })
+        const response = await request(app)
+            .put(`/profiles/${user.login}/quizzes/${id}`)
+            .set({ Authorization: basicAuth })
             .send(updatedQuiz);
 
-        expect(openapi.validateResponse(method, path)(response)).toBeUndefined();
         expect(response.statusCode).toBe(constants.HTTP_STATUS_OK);
-        expect(response.body.questions[0].answers[0].text).toBe(updatedQuiz.questions[0].answers[0].text);
+        expect(response.body.questionIds.length).toBe(1);
     });
-    test("Should allow edit only to creators of quiz", async () => {
-        const [method, path] = ["put" as Operation, "/profiles/{login}/quizzes/{quizId}"];
+    test("Should allow edit only to creators of quiz", async () => {        
         const token = await login(user);
-        const anotherToken = await login(anotherUser);
+        const { basicAuth } = await login(anotherUser);
 
         const originalQuiz = {
-            questions: [
-                {
-                    questionText: "what is the answer to life the universe and everything",
-                    questionScore: 5,
-                    answers: [
-                        {
-                            text: "2",
-                            isCorrect: true,
-                        },
-                        {
-                            text: "15",
-                            isCorrect: false,
-                        },
-                    ],
-                },
-            ],
-        };
+            questionIds: ["619e9fa874959e2e053aec4e", "619e9fa874959e2e053aec4e"],
+        } as Quiz;
         const { id } = await createQuiz(user.login, token, originalQuiz);
         const updatedQuiz = {
-            questions: [
-                {
-                    questionText: "what is the answer to life the universe and everything",
-                    questionScore: 5,
-                    answers: [
-                        {
-                            text: "42",
-                            isCorrect: true,
-                        },
-                        {
-                            text: "41",
-                            isCorrect: false,
-                        },
-                    ],
-                },
-            ],
-        };
+            questionIds: ["619e9fa874959e2e053aec4e"],
+        } as Quiz;
 
-        const response = await request(app)[method](path.replace("{login}", user.login).replace("{quizId}", id!))
-            .set({ Authorization: anotherToken })
+        const response = await request(app)
+            .put(`/profiles/${user.login}/quizzes/${id}`)
+            .set({ Authorization: basicAuth })
             .send(updatedQuiz);
-
-        expect(openapi.validateResponse(method, path)(response)).toBeUndefined();
+        
         expect(response.statusCode).toBe(constants.HTTP_STATUS_UNAUTHORIZED);
         expect(response.text).toBe("You are not authorized to modify this resource");
     });

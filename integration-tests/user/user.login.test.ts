@@ -14,7 +14,8 @@ describe("Login User API", () => {
         const response = await request(app).post("/users/login").send(user);
 
         expect(response.statusCode).toBe(constants.HTTP_STATUS_OK);
-        expect(response.text).toBe("Basic bGF1cmE6bXlwYXNzd29yZA==");
+        expect(response.body).toHaveProperty("basicAuth", "Basic bGF1cmE6bXlwYXNzd29yZA==");
+        expect(response.body).toHaveProperty("login", "laura");
     });
     test("Should return BAD_REQUEST when invalid user", async () => {
         const response = await request(app).post("/users/login").send({ login: "laura" });

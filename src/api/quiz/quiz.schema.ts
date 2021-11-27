@@ -1,5 +1,6 @@
+import { Quiz } from "@prisma/client";
 import Joi from "joi";
-import { Answer, Question, Quiz } from "../../model";
+import { Answer, Question } from "../../model";
 
 const answerSchema = Joi.object<Answer>({
     isCorrect: Joi.boolean().required(),
@@ -13,5 +14,5 @@ const questionSchema = Joi.object<Question>({
 });
 
 export const quizSchema = Joi.object<Quiz>({
-    questions: Joi.array().min(1).items(questionSchema).required(),
+    questionIds: Joi.array().min(1).items(Joi.string()).required(),
 });

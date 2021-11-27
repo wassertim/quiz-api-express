@@ -6,7 +6,7 @@ import { mocked } from "ts-jest/utils";
 import { postQuiz } from "../quiz.controller";
 import { createQuiz } from "../quiz.service";
 import { ApiError } from "../../../errors/errors";
-import { Quiz } from "../../../model";
+import { Quiz } from "@prisma/client";
 
 jest.mock("../../../api/quiz/quiz.service");
 

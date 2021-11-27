@@ -1,6 +1,7 @@
+import { Quiz } from "@prisma/client";
 import request from "supertest";
 import { app } from "../../src/app";
-import { Quiz, QuizSubmission } from "../../src/model";
+import { QuizSubmission } from "../../src/model";
 import { User } from "../../src/model/user.model";
 
 export async function registerUser(user: User) {

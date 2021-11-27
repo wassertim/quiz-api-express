@@ -1,5 +1,5 @@
 import { login, register } from "../user.controller";
-import { createUser, validateUser } from "../user.service";
+import { createUser, getToken, validateUser } from "../user.service";
 import { Request, Response } from "express";
 import { err, ok } from "neverthrow";
 import { mockResponse } from "../../../test/express.mock";
@@ -7,6 +7,7 @@ import { constants } from "http2";
 import { mocked } from "ts-jest/utils";
 import { ApiError } from "../../../errors/errors";
 import { User } from "@prisma/client";
+import { TockenResult } from "../../../model/token-result";
 
 jest.mock("../../../api/user/user.service");
 
@@ -64,17 +65,18 @@ describe("Register User API", () => {
 describe("Login User API", () => {
     test("Should login user and return token", async () => {
         const user = { login: "laura", password: "mypassword" } as User;
-        const req = { body: user } as Request;
-        const responseText = "token";
+        const req = { body: user } as Request;        
         const response = mockResponse();
         const mockedValidateUser = mocked(validateUser, true);
-        mockedValidateUser.mockResolvedValue(ok(responseText));
+        mockedValidateUser.mockResolvedValue(ok(user));
+        const tockenResult = { basicAuth: "token", id: "", login: user.login } as TockenResult;
+        mocked(getToken).mockReturnValue(tockenResult);
 
         await login(req, response as Response);
 
         expect(mockedValidateUser).toHaveBeenCalledWith(user);
         expect(response.status).toHaveBeenCalledWith(constants.HTTP_STATUS_OK);
-        expect(response.send).toHaveBeenCalledWith(responseText);
+        expect(response.send).toHaveBeenCalledWith(tockenResult);
     });
     test("Should login user and return token", async () => {
         const user = { login: "laura", password: "mypassword" } as User;

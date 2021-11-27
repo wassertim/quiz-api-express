@@ -3,8 +3,6 @@ import { login, registerUser } from "../util/api";
 import request from "supertest";
 import { app } from "../../src/app";
 import { constants } from "http2";
-import { Operation } from "express-openapi-validate/dist/OpenApiDocument";
-import { openapi } from "../util/openapi";
 
 describe("Create Quiz API", () => {
     cleanUpDatabase();
@@ -13,30 +11,10 @@ describe("Create Quiz API", () => {
         return registerUser(user);
     });
     test("Should create a quiz", async () => {
-        const { basicAuth, id } = await login(user);
-
-        const temp = {
-            questions: [
-                {
-                    questionText: "what is the answer to life the universe and everything",
-                    questionScore: 5,
-                    answers: [
-                        {
-                            text: "42",
-                            isCorrect: true,
-                        },
-                        {
-                            text: "41",
-                            isCorrect: false,
-                        },
-                    ],
-                },
-            ],
-        };
+        const { basicAuth, id } = await login(user);        
 
         const quiz = {
-            questionIds: ["619e9fa874959e2e053aec4e", "619e9fa874959e2e053aec4e"],
-            userId: "619e9fa874959e2e053aec4e",
+            questionIds: ["619e9fa874959e2e053aec4e", "619e9fa874959e2e053aec4e"]            
         };
 
         const response = await request(app)
@@ -47,28 +25,19 @@ describe("Create Quiz API", () => {
         expect(response.statusCode).toBe(constants.HTTP_STATUS_CREATED);
         expect(response.body.userId).toBe(id);
     });
-    test("Should give an error when invalid quiz", async () => {
-        const [method, path] = ["post" as Operation, "/profiles/{login}/quizzes"];
-        const token = await login(user);
+    test("Should give an error when invalid quiz", async () => {        
+        const { basicAuth } = await login(user);
+        const quiz = {
+            questionIds: [],
+            userId: "619e9fa874959e2e053aec4e",
+        };
 
-        const response = await request(app)[method](path.replace("{login}", user.login))
-            .set({ Authorization: token })
-            .send({
-                questions: [
-                    {
-                        questionScore: 5,
-                        answers: [
-                            {
-                                text: "42",
-                                isCorrect: true,
-                            },
-                        ],
-                    },
-                ],
-            });
+        const response = await request(app)
+            .post(`/profiles/${user.login}/quizzes`)
+            .set({ Authorization: basicAuth })
+            .send(quiz);
 
-        expect(openapi.validateResponse(method, path)(response)).toBeUndefined();
         expect(response.statusCode).toBe(constants.HTTP_STATUS_BAD_REQUEST);
-        expect(response.text).toBe('"questions[0].questionText" is required');
+        expect(response.text).toBe('"questionIds" must contain at least 1 items');
     });
 });

@@ -14,18 +14,16 @@ describe("Create Quiz API", () => {
     beforeEach(() => {
         return registerUser(user);
     });
-    test("Should submit a solved quiz", async () => {
-        const [method, path] = ["post" as Operation, "/quiz-submissions"];
+    test("Should submit a solved quiz", async () => {    
         const token = await login(user);
-        const {id} = await createQuiz(user.login, token, testQuiz);
+        const { id } = await createQuiz(user.login, token, testQuiz);
 
-        const response = await request(app)[method](path)            
+        const response = await request(app).post("/quiz-submissions")
             .send({
                 quizId: id,
-                questionsAndAnswers: [{questionIndex: 0, answerIndicies: [0]}]                
+                questionsAndAnswers: [{ questionIndex: 0, answerIndicies: [0] }],
             } as QuizSubmission);
-
-        expect(openapi.validateResponse(method, path)(response)).toBeUndefined();
-        expect(response.statusCode).toBe(constants.HTTP_STATUS_CREATED);        
+        
+        expect(response.statusCode).toBe(constants.HTTP_STATUS_CREATED);
     });
 });

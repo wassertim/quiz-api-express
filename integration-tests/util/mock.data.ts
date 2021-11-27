@@ -1,20 +1,5 @@
-import { Quiz } from "../../src/model";
+import { Quiz } from "@prisma/client";
 
 export const testQuiz = {
-    questions: [
-        {
-            questionText: "what is the answer to life the universe and everything",
-            questionScore: 5,
-            answers: [
-                {
-                    text: "42",
-                    isCorrect: true,
-                },
-                {
-                    text: "41",
-                    isCorrect: false,
-                },
-            ],
-        },
-    ],
+    questionIds: ["619e9fa874959e2e053aec4e", "619e9fa874959e2e053aec4e"],
 } as Quiz;

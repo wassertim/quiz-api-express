@@ -3,6 +3,7 @@ import { ApiError, ServiceError } from "../../errors/errors";
 import bcrypt from "bcrypt";
 import { User } from "@prisma/client";
 import { prisma } from "../db";
+import { TockenResult } from "../../model/token-result";
 
 const getHash = (password: string) => bcrypt.hash(password, 10);
 
@@ -24,7 +25,7 @@ export async function createUser(user: User): Promise<Result<User, ServiceError>
     }
 }
 
-export function getToken(user: User) {
+export function getToken(user: User): TockenResult {
     const { login, password, id } = user;
     const token = Buffer.from(`${login}:${password}`).toString("base64");
     const basicAuth = `Basic ${token}`;
