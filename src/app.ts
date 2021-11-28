@@ -6,6 +6,7 @@ import { BasicStrategy } from "passport-http";
 import { verify } from "./middleware/passport";
 import { quizRouter, usersRoute, quizSubmissionsRoute, quizStatisticsRoute } from "./api/routes";
 import { loginParams } from "./middleware/login.params";
+import { questionRouter } from "./api/question/question.route";
 
 export const app = express();
 
@@ -19,5 +20,6 @@ app.use("/users", usersRoute);
 app.use("/profiles/:login/quizzes", loginParams, quizRouter);
 app.use("/quiz-submissions", quizSubmissionsRoute);
 app.use("/quiz-statistics", quizStatisticsRoute);
+app.use("/questions", questionRouter);
 
 passport.use(new BasicStrategy(verify));
