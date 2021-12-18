@@ -1,5 +1,5 @@
 import { ObjectId } from "mongodb";
-import { err, ok } from "neverthrow";
+import {err, ok, Result} from "neverthrow";
 import { Quizzes } from "../../db";
 import { Quiz } from "../../model/quiz.model";
 import { ApiError, ServiceError } from "../../errors/errors";
@@ -14,14 +14,14 @@ export async function createQuiz(quiz: Quiz) {
     }
 }
 
-export async function editQuiz(quizId: string, quiz: Quiz) {
+export async function editQuiz(quizId: string, quiz: Quiz): Promise<Result<Quiz, ServiceError>> {
     try {
         const result = await Quizzes().updateOne(
             { _id: ObjectId.createFromHexString(quizId), createdBy: quiz.createdBy },
-            { $set: quiz }            
+            { $set: quiz }
         );
         if (result.modifiedCount > 0) {
-            return ok({...quiz, id: quizId});
+            return ok({...quiz, id: quizId, _id: quizId});
         }
         return err({
             code: ApiError.UNKNOWN_ERROR,
