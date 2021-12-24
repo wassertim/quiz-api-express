@@ -8,7 +8,7 @@ type QuizSubmission {
     questionsAndAnswers: [QuestionsAndAnswers]
 }
 
-type QuestionsAndAnswers {
+extend type QuestionsAndAnswers {
     questionIndex: Int
     answerIndicies: [Int]
 }

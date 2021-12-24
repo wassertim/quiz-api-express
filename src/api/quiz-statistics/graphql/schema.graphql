@@ -1,0 +1,26 @@
+extend type Query {
+    getQuizStatistics(quizId: ID!): QuizStatistics
+}
+
+type QuizStatistics {
+    quizId: ID!
+    totalSubmissions: Int
+    submissionsStat: [SubmissionsStat]
+}
+
+type SubmissionsStat {
+    quizId: ID
+    totalQuestionsInQuiz: Int
+    totalCompletedQuestions: Int
+    scoreTotal: Int
+    completion: String
+    correctAnswersCount: Int
+    questionsAndAnswers: [QuestionsAndAnswers]
+}
+
+extend type QuestionsAndAnswers {
+    score: Int
+    isCorrect: Boolean
+    questionText: String
+    completed: Boolean
+}

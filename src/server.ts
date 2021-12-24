@@ -13,20 +13,8 @@ const typeDefs = [
     gql(fs.readFileSync("./src/api/quiz/graphql/schema.graphql", { encoding: "utf8" })),
     gql(fs.readFileSync("./src/api/quiz-submission/graphql/schema.graphql", { encoding: "utf8" })),
     gql(fs.readFileSync("./src/api/graphql/schema.graphql", { encoding: "utf8" })),
+    gql(fs.readFileSync("./src/api/quiz-statistics/graphql/schema.graphql", { encoding: "utf8" })),
 ];
-
-async function startApolloServer(typeDefs: any, resolvers: any) {
-    const httpServer = http.createServer(app);
-    const server = new ApolloServer({
-        typeDefs,
-        resolvers,
-        plugins: [ApolloServerPluginDrainHttpServer({ httpServer })],
-    });
-    await server.start();
-    server.applyMiddleware({ app });
-    await new Promise<void>((resolve) => httpServer.listen({ port: PORT }, resolve));
-    console.log(`🚀 Server ready at http://localhost:${PORT}${server.graphqlPath}`);
-}
 
 mongoConnect()
     .then(async () => {
