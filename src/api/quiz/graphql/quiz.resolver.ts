@@ -13,11 +13,11 @@ export const createQuizResolver = async (root: any, { quiz }: any) => {
 
 export const editQuizResolver = async (root: any, args: any) => {
     return (await editQuiz(args._id, args.quiz))
-    .map((quiz) => quiz)
-    .mapErr((err) => {
-        throw new Error(err.message);
-    })
-    .unwrapOr(() => {
-        throw new Error("Unknown Error");
-    });
+        .map((quiz) => quiz)
+        .mapErr((err) => {
+            throw new Error(err.message);
+        })
+        .unwrapOr(() => {
+            throw new Error("Unknown Error");
+        });
 };

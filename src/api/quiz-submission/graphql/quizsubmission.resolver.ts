@@ -1,6 +1,6 @@
-import {insertQuizSubmission} from '../quiz-submission.service';
+import { insertQuizSubmission } from "../quiz-submission.service";
 
-export const createQuizSubmission = async (root: any, {quizSubmission}: any) => {
+export const createQuizSubmission = async (root: any, { quizSubmission }: any) => {
     return (await insertQuizSubmission(quizSubmission))
         .map((quizSubmission) => quizSubmission)
         .mapErr((err) => {

@@ -4,8 +4,8 @@ import { ApolloServer, gql } from "apollo-server-express";
 import http from "http";
 import { ApolloServerPluginDrainHttpServer } from "apollo-server-core";
 import fs from "fs";
-import {Mutation} from './api/graphql/mutation';
-import {Query} from './api/graphql/query';
+import { Mutation } from "./api/graphql/mutation";
+import { Query } from "./api/graphql/query";
 
 const PORT = process.env.PORT || 5050;
 
@@ -35,7 +35,7 @@ mongoConnect()
             typeDefs,
             resolvers: {
                 Mutation,
-                Query
+                Query,
             },
             plugins: [ApolloServerPluginDrainHttpServer({ httpServer })],
         });
