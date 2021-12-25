@@ -31,6 +31,7 @@ describe('createQuizResolver', () => {
         };
         const mockedCreateQuiz = mocked(createQuiz, true);
         mockedCreateQuiz.mockResolvedValue(ok(quiz));
+        
         const result = await createQuizResolver(root, quiz);
 
         expect(result).toBe(quiz);

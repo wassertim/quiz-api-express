@@ -2,6 +2,7 @@ extend type Mutation {
     createQuiz(quiz: QuizInput): Quiz
     editQuiz(_id: ID!, quiz: QuizInput): Quiz
 }
+
 extend type Query {
     all: [Quiz]
 }
