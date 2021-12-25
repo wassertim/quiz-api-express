@@ -1,0 +1,24 @@
+extend type Mutation {
+    createQuizSubmission(quizSubmission: QuizSubmissionInput): QuizSubmission
+}
+
+type QuizSubmission {
+    id: ID!
+    quizId: ID!
+    questionsAndAnswers: [QuestionsAndAnswers]
+}
+
+type QuestionsAndAnswers {
+    questionIndex: Int
+    answerIndicies: [Int]
+}
+
+input QuizSubmissionInput {
+    quizId: ID!
+    questionsAndAnswers: [QuestionsAndAnswersInput]
+}
+
+input QuestionsAndAnswersInput {
+    questionIndex: Int
+    answerIndicies: [Int]
+}

@@ -1,5 +1,5 @@
-import createQuizResolver from '../graphql/quiz.resolver';
-import editQuizResolver from '../graphql/quiz.resolver';
+import {createQuizResolver} from '../graphql/quiz.resolver';
+import {editQuizResolver} from '../graphql/quiz.resolver';
 import {createQuiz, editQuiz} from '../quiz.service';
 import {mocked} from "ts-jest/utils";
 import {err, ok} from "neverthrow";
@@ -31,7 +31,7 @@ describe('createQuizResolver', () => {
         };
         const mockedCreateQuiz = mocked(createQuiz, true);
         mockedCreateQuiz.mockResolvedValue(ok(quiz));
-        const result = await createQuizResolver.Mutation.createQuiz(root, quiz);
+        const result = await createQuizResolver(root, quiz);
 
         expect(result).toBe(quiz);
     });
@@ -43,7 +43,7 @@ describe('createQuizResolver', () => {
             err({code: ApiError.VALIDATION_ERROR, message: 'Some validation error'})
         );
 
-        await expect(createQuizResolver.Mutation.createQuiz(root, quiz))
+        await expect(createQuizResolver(root, quiz))
             .rejects
             .toMatchObject({message: 'Some validation error'});
     });
@@ -54,7 +54,7 @@ describe('createQuizResolver', () => {
         mockedCreateQuiz.mockResolvedValue(
             err({code: ApiError.VALIDATION_ERROR, message: 'Unknown error'})
         );
-        expect(createQuizResolver.Mutation.createQuiz(root,quiz))
+        expect(createQuizResolver(root,quiz))
             .rejects
             .toMatchObject({message: 'Unknown error'});
     });
@@ -86,7 +86,7 @@ describe('editQuizResolver',  () => {
         const mockedEditQuiz = mocked(editQuiz, true);
         mockedEditQuiz.mockResolvedValue(ok(args.quiz));
 
-        const editedQuiz = await editQuizResolver.Mutation.editQuiz(null, args.quiz);
+        const editedQuiz = await editQuizResolver(null, args.quiz);
 
         expect(editedQuiz).toBe(args.quiz);
     });
