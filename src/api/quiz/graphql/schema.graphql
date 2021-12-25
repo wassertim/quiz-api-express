@@ -1,6 +1,10 @@
-type Mutation {
+extend type Mutation {
     createQuiz(quiz: QuizInput): Quiz
     editQuiz(_id: ID!, quiz: QuizInput): Quiz
+}
+
+extend type Query {
+    all: [Quiz]
 }
 
 type Quiz {
@@ -32,8 +36,4 @@ input AnswerInput {
 type Answer {
     text: String!
     isCorrect: Boolean
-}
-
-type Query {
-    all: [Quiz]
 }
