@@ -1,0 +1,39 @@
+type Mutation {
+    createQuiz(quiz: QuizInput): Quiz
+    editQuiz(_id: ID!, quiz: QuizInput): Quiz
+}
+
+type Quiz {
+    _id: ID!
+    questions: [Question]!
+}
+
+input QuizInput {
+    questions: [QuestionInput]!
+}
+
+input QuestionInput {
+    questionText: String!
+    questionScore: Int!
+    answers: [AnswerInput]!
+}
+
+type Question {
+    questionText: String!
+    questionScore: Int!
+    answers: [Answer]!
+}
+
+input AnswerInput {
+    text: String!
+    isCorrect: Boolean
+}
+
+type Answer {
+    text: String!
+    isCorrect: Boolean
+}
+
+type Query {
+    all: [Quiz]
+}
