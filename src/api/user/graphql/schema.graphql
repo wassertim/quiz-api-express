@@ -1,0 +1,17 @@
+extend type Mutation {
+    registerUser(user: UserInput): User
+}
+
+extend type Query {
+    loginUser(user: UserInput): String
+}
+
+type User {
+    login: String!
+    password: String!
+}
+
+input UserInput{
+    login: String!
+    password: String!
+}
